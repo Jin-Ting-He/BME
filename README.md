@@ -1,0 +1,1 @@
+# blur-magnitude-estimator
