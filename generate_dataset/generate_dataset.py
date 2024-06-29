@@ -146,8 +146,8 @@ def main(parms):
 
 if __name__ == '__main__':
     parms = dict()
-    parms['avg_num'] = 15
-    parms['input_folder'] = "disk2/jthe/datasets/GOPRO_Large_all/train"
-    parms['output_folder'] = "disk2/jthe/datasets/GOPRO_blur_magnitude/train/frame"+str(parms['avg_num'])
+    parms['avg_num'] = 11
+    parms['input_folder'] = "disk2/jthe/datasets/GOPRO_Large_all/test"
+    parms['output_folder'] = "disk2/jthe/datasets/GOPRO_blur_magnitude/test/frame"+str(parms['avg_num'])
     main(parms)
     print(max_magnitude)
