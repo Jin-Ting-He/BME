@@ -1,5 +1,5 @@
 # Blur Magnitude Estimator(BME)
-This task aims to estimate the blur magnitude for each pixel from a blurry image as below example.
+This task aims to estimate the blur magnitude for each pixel from a blurry image as below example. The details will be in our [Paper]()
 <p align="center">
   <img src="assets/blur_img.png" alt="Blurry Image" width="45%" style="margin-right: 10px;">
   <img src="assets/blur_mag.png" alt="Blur Magnitude" width="45%">
