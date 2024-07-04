@@ -31,8 +31,6 @@ from dataset.dataloader import BlurMagDataset
 from utils.logger import Logger
 from model.bme_model import MyNet_Res50_multiscale
 from train.optimizer import Optimizer
-from train.utils import AverageMeter
-from train.loss import L1GradientLoss
 
 class Trainer():
     def __init__(self, args) -> None:
@@ -47,8 +45,6 @@ class Trainer():
                 self.logger = Logger(self.args.logger_path)
 
             self.l1_loss = torch.nn.L1Loss()
-            self.sill_loss = ScaleInvariantLogLoss()
-            self.lg_loss = L1GradientLoss()
             self.opt = Optimizer(self.model, self.args)
 
             self.min_loss = float('inf')
