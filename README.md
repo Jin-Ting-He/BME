@@ -14,6 +14,10 @@ In this task, we use the [RAFT](https://github.com/princeton-vl/RAFT) and [GoPro
 python generate_dataset/generate_dataset.py
 ```
 
+## Pretrained Model Weight
+You can download the our model weight from this link
+[BME Model Weight](https://drive.google.com/file/d/1ASHteVTpdjI3CPBULtfMPsJyArVlnw6k/view?usp=sharing)
+
 ## Dataset Structure
 ```bash
 dataset/

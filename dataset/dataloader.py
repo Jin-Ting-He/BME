@@ -1,4 +1,4 @@
-from PIL import Image, ImageOps
+from PIL import Image
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,10 +7,6 @@ import torchvision.transforms as transforms
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from torchvision.transforms.functional import to_pil_image
-from PIL import Image, ImageOps
-#from skimage import filters
-from PIL import ImageFilter
 import random
 import cv2
 
@@ -34,7 +30,7 @@ class RandomCrop(object):
         return data
 
 class Normalize(object):
-    def __init__(self, mag_norm, ZeroToOne=False):
+    def __init__(self, mag_norm, ZeroToOne=True):
         super(Normalize, self).__init__()
         self.ZeroToOne = ZeroToOne
         self.num = 0 if ZeroToOne else 0.5
@@ -43,12 +39,13 @@ class Normalize(object):
     def __call__(self, data):
         for key in data.keys():
             if key == 'blur_mag':
-                data[key] = (data[key] / self.mag_norm).copy()
-                data[key][data[key] > 1] = 1
-                data[key] = (data[key] - self.num).copy()
+                # v2
+                # data[key] = (data[key] / self.mag_norm).copy()
+                # data[key][data[key] > 1] = 1
+                # data[key] = (data[key] - self.num).copy()
 
                 # v1
-                # data[key] = ((data[key] / self.mag_norm) - self.num).copy()
+                data[key] = ((data[key] / self.mag_norm) - self.num).copy()
             else:
                 data[key] = ((data[key] / 255) - self.num).copy()
         return data
@@ -69,7 +66,7 @@ class Resize(object):
         elif isinstance(size, tuple):
             self.size = size
         else:
-            raise RuntimeError("size参数请设置为int或者tuple")
+            raise RuntimeError("resize error")
 
     def __call__(self, data):
         data['blur_img'] = data['blur_img'].resize(self.size, resample=Image.BILINEAR).copy()
@@ -80,7 +77,7 @@ class BlurMagDataset(Dataset):
         
         self.train = train
         self.crop_size = 256
-        self.mag_norm = 150
+        self.mag_norm = 205 # the max magnitude of training dataset
         if train:
             self.transform = transforms.Compose([RandomCrop(self.crop_size, self.crop_size), Normalize(self.mag_norm), ToTensor()])
             self.blur_img_path_list = []
