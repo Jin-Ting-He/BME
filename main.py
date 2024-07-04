@@ -15,7 +15,6 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 from torch.utils.data.distributed import DistributedSampler
-from torchvision.transforms.functional import to_pil_image
 
 import torch.distributed as dist
 
@@ -33,7 +32,7 @@ from utils.logger import Logger
 from model.bme_model import MyNet_Res50_multiscale
 from train.optimizer import Optimizer
 from train.utils import AverageMeter
-from train.loss import L1GradientLoss, ScaleInvariantLogLoss
+from train.loss import L1GradientLoss
 
 class Trainer():
     def __init__(self, args) -> None:
@@ -193,12 +192,12 @@ class Trainer():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--local_rank", default=os.getenv('LOCAL_RANK', -1), type=int)
-    parser.add_argument("--weight_path", default="home/jthe/BME/blur-magnitude-estimator/weights/myunet_v3", type=str)
-    parser.add_argument("--logger_path", default="home/jthe/BME/blur-magnitude-estimator/log/myunet_v3/training_loss.txt", type=str)
+    parser.add_argument("--weight_path", default="home/jthe/BME/BME/weights/", type=str)
+    parser.add_argument("--logger_path", default="home/jthe/BME/BME/log/myunet_v3/training_loss.txt", type=str)
     parser.add_argument("--training_dataset_path", default="disk2/jthe/datasets/GOPRO_blur_magnitude/train", type=str)
     parser.add_argument("--testing_dataset_path", default="disk2/jthe/datasets/GOPRO_blur_magnitude/test", type=str)
     parser.add_argument("--infer_dataset_path", default="disk2/jthe/datasets/GOPRO_blur_magnitude/test/frame11", type=str)
-    parser.add_argument("--infer_output_path", default="home/jthe/BME/blur-magnitude-estimator/output/myunet_v3", type=str)
+    parser.add_argument("--infer_output_path", default="home/jthe/BME/BME/output/", type=str)
     parser.add_argument("--epochs", default=500, type=int)
     parser.add_argument("--init_lr", default=1e-3, type=float)
     parser.add_argument("--final_lr", default=1e-5, type=float)
