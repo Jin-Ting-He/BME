@@ -30,12 +30,10 @@ np.random.seed(39)
 from torch.utils.data import DataLoader
 from dataset.dataloader import BlurMagDataset
 from utils.logger import Logger
-from model.new_baseline_multiscale import MyNet_Res50_multiscale
-from model.unet import UNet
-from model.resnet34_unet import UNetPlusResNet34
+from model.bme_model import MyNet_Res50_multiscale
 from train.optimizer import Optimizer
 from train.utils import AverageMeter
-from train.loss import L1GradientLoss
+from train.loss import L1GradientLoss, ScaleInvariantLogLoss
 
 class Trainer():
     def __init__(self, args) -> None:
@@ -50,6 +48,7 @@ class Trainer():
                 self.logger = Logger(self.args.logger_path)
 
             self.l1_loss = torch.nn.L1Loss()
+            self.sill_loss = ScaleInvariantLogLoss()
             self.lg_loss = L1GradientLoss()
             self.opt = Optimizer(self.model, self.args)
 
@@ -84,9 +83,8 @@ class Trainer():
             blur_img, blur_mag = blur_img.to(self.args.device),blur_mag.to(self.args.device)
 
             pred_mag = self.model(blur_img)
-            
-            pred_mag = pred_mag.squeeze(1)
-            loss = self.l1_loss(pred_mag, blur_mag)
+
+            loss = self.l1_loss(pred_mag, blur_mag) + self.sill_loss(pred_mag, blur_mag)
 
             loss.backward()
             self.opt.step()
@@ -133,8 +131,6 @@ class Trainer():
         checkpoint_path = os.path.join(self.args.weight_path, self.args.model_name)
         checkpoint = torch.load(checkpoint_path, map_location=lambda storage, loc: storage.cuda())
         self.model = MyNet_Res50_multiscale().cuda()
-        # self.model = UNet(3,1).cuda()
-        # self.model = UNetPlusResNet34(3, 1).cuda()
         self.model.load_state_dict(checkpoint)
         print("Loading Model Done")
 
@@ -155,14 +151,13 @@ class Trainer():
                 blur_img = blur_img.cuda()
 
                 output = self.model(blur_img)
-                output = output.clamp(-0.5, 0.5)
+                # output = output.clamp(-0.5, 0.5)
+                output = output.clamp(0 ,1)
                 output = output[0].to('cpu').detach().numpy().squeeze()
-                print(np.min(output), np.max(output))
-                output =  ((output+0.5) * 205)
+                # output =  ((output+0.5) * 205)
+                output =  ((output) * 205)
                 output = output/np.max(output)
                 output = np.uint8(255-(output*255))
-                # output[output<0] = 0
-                # output = to_pil_image(output).resize((1280,720), resample=Image.NEAREST)
 
                 output_video_folder = os.path.join(output_folder, video_name[0])
                 os.makedirs(output_video_folder, exist_ok=True)
@@ -181,8 +176,6 @@ class Trainer():
         print("# of gpus",num_gpus)
 
         self.model = MyNet_Res50_multiscale()
-        # self.model = UNet(3, 1)
-        # self.model = UNetPlusResNet34(3, 1)
         self.model.to(self.args.device)
         self.model = nn.parallel.DistributedDataParallel(self.model, device_ids=[self.args.local_rank], output_device=self.args.local_rank)
  
@@ -200,12 +193,12 @@ class Trainer():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--local_rank", default=os.getenv('LOCAL_RANK', -1), type=int)
-    parser.add_argument("--weight_path", default="home/jthe/BME/blur-magnitude-estimator/weights/myunet_v2", type=str)
-    parser.add_argument("--logger_path", default="home/jthe/BME/blur-magnitude-estimator/log/myunet_v2/training_loss.txt", type=str)
+    parser.add_argument("--weight_path", default="home/jthe/BME/blur-magnitude-estimator/weights/myunet_v3", type=str)
+    parser.add_argument("--logger_path", default="home/jthe/BME/blur-magnitude-estimator/log/myunet_v3/training_loss.txt", type=str)
     parser.add_argument("--training_dataset_path", default="disk2/jthe/datasets/GOPRO_blur_magnitude/train", type=str)
     parser.add_argument("--testing_dataset_path", default="disk2/jthe/datasets/GOPRO_blur_magnitude/test", type=str)
     parser.add_argument("--infer_dataset_path", default="disk2/jthe/datasets/GOPRO_blur_magnitude/test/frame11", type=str)
-    parser.add_argument("--infer_output_path", default="home/jthe/BME/blur-magnitude-estimator/output/myunet_v2", type=str)
+    parser.add_argument("--infer_output_path", default="home/jthe/BME/blur-magnitude-estimator/output/myunet_v3", type=str)
     parser.add_argument("--epochs", default=500, type=int)
     parser.add_argument("--init_lr", default=1e-3, type=float)
     parser.add_argument("--final_lr", default=1e-5, type=float)
