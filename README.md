@@ -1,7 +1,10 @@
 # Blur Magnitude Estimator(BME)
+This task aims to estimate the blur magnitude for each pixel from a blurry image as below example.
+![assets/blur_img.png]
+![assets/blur_mag.png]
 
 ## Prepare BME dataset
-In this task, we use the -[RAFT](https://github.com/princeton-vl/RAFT) and -[GoPro](https://seungjunnah.github.io/Datasets/gopro.html) to generate training dataset for BME. The details will be in our -[Paper]
+In this task, we use the [RAFT](https://github.com/princeton-vl/RAFT) and [GoPro](https://seungjunnah.github.io/Datasets/gopro.html) to generate training dataset for BME. The details will be in our [Paper]()
 
 ```bash
 python generate_dataset/generate_dataset.py
