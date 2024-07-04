@@ -1,6 +1,8 @@
 # Blur Magnitude Estimator(BME)
 
 ## Prepare BME dataset
+In this task, we use the -[RAFT](https://github.com/princeton-vl/RAFT) and -[GoPro](https://seungjunnah.github.io/Datasets/gopro.html) to generate training dataset for BME. The details will be in our -[Paper]
+
 ```bash
 python generate_dataset/generate_dataset.py
 ```
@@ -17,6 +19,11 @@ dataset/
 ├── video3/
 │ ├── blur_image/
 │ └── blur_mag_np/
+```
+
+## Train
+```bash
+python main.py --training_dataset_path="your training dataset" --testing_dataset_path="your testing dataset" --weight_path="weight output path"
 ```
 
 ## Inference
