@@ -6,6 +6,7 @@ python generate_dataset/generate_dataset.py
 ```
 
 ## Dataset Structure
+```bash
 dataset/
 ├── video1/
 │ ├── blur_image/
@@ -16,6 +17,7 @@ dataset/
 ├── video3/
 │ ├── blur_image/
 │ └── blur_mag_np/
+```
 
 ## Inference
 ```bash
