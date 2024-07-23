@@ -95,11 +95,9 @@ class BlurMagDataset(Dataset):
         else:
             self.transform = transforms.Compose([Normalize(self.mag_norm), ToTensor()])
             self.blur_img_path_list = []
-            video_list = os.listdir(dataset_root)
-            for video in video_list:
-                file_list = os.listdir(os.path.join(dataset_root, video, 'blur_img'))
-                for file in file_list:
-                    self.blur_img_path_list.append(os.path.join(dataset_root, video, 'blur_img', file))
+            file_list = os.listdir(os.path.join(dataset_root, 'Blur/RGB'))
+            for file in file_list:
+                self.blur_img_path_list.append(os.path.join(dataset_root, 'Blur/RGB', file))
 
         self.length = len(self.blur_img_path_list)
                 
